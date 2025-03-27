@@ -29,12 +29,11 @@ def main():
         gamma=0.99,
         gae_lambda=0.95,
         clip_range=0.2,
-        policy_kwargs=dict(log_std_init=5.0)
+        policy_kwargs=dict(log_std_init=5.0),
     )
-    # 我如何給tensorboard取名
 
     cb = GPUControlCallback(
-        run_name = 'log_std_init=5.0'
+        run_name = 'policy_kwargs=dict(log_std_init=5.0)',
         verbose=1, 
         dump_interval=100,
         csv_path="training_log.csv"  # CSV 檔案名稱
