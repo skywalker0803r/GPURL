@@ -46,7 +46,6 @@ def compute_reward(
 
             # 4) scale => 自己調整
             scale = 0.5
-
             reward = scale * drop_amount * early_factor * extra_factor
 
         else:
@@ -56,7 +55,7 @@ def compute_reward(
         return reward
 
     # (C) 溫度 <75 => 沿用原本正獎勵
-
+    # 使得在低溫情況下 PL可以緩慢上升
     # pl factor
     norm_pl = (pl_new - 100.0) / 175.0
     if norm_pl < 0:
@@ -71,6 +70,7 @@ def compute_reward(
         # 線性: 70->1, 75->0
         temp_factor = (75.0 - temp) / 5.0
 
+    # 當溫度小於7
     reward = norm_pl * temp_factor
     return reward
 

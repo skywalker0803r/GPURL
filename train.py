@@ -64,7 +64,7 @@ def main():
     )
 
     # 组合回调：先执行 TensorBoard 记录，再检查步数
-    combined_cb = CallbackList([tensorboard_cb, EarlyStopCallback(max_steps=10)])
+    combined_cb = CallbackList([tensorboard_cb, EarlyStopCallback(max_steps=10000)])
 
     model.learn(
     total_timesteps=10000,  # 保留此参数（虽然实际由 EarlyStopCallback 控制）
