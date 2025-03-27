@@ -8,10 +8,20 @@ import csv
 import numpy as np
 from stable_baselines3.common.callbacks import BaseCallback
 
+class EarlyStopCallback(BaseCallback):
+    def __init__(self, max_steps: int):
+        super().__init__()
+        self.max_steps = max_steps
+
+    def _on_step(self) -> bool:
+        # 当步数超过 max_steps 时中断训练
+        if self.num_timesteps >= self.max_steps:
+            return False
+        return True
+
 class GPUControlCallback(BaseCallback):
-    def __init__(self, run_name, verbose=1, dump_interval=100, csv_path="training_log.csv"):
+    def __init__(self, verbose=1, dump_interval=100, csv_path="training_log.csv"):
         super().__init__(verbose)
-        self.run_name = run_name
         self.dump_interval = dump_interval
         self.csv_path = csv_path
 
@@ -27,12 +37,6 @@ class GPUControlCallback(BaseCallback):
         self.reward_log = []
 
         self.episode_reward = 0.0
-    
-    def _on_training_start(self) -> None:
-        # 设置运行名称
-        if self.logger is not None:
-            self.logger.name = self.run_name
-        return True
 
     def _init_callback(self) -> None:
         """

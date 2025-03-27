@@ -66,6 +66,52 @@ class GPUEnv(gym.Env):
         except subprocess.CalledProcessError as e:
             print("[WARN] Setting PL failed?", e)
 
+    def set_fan_speed(self, fan_speed: float):
+        """
+        Set GPU fan speed using nvidia-settings
+        Args:
+            fan_speed: Fan speed value between 0-100
+        """
+        clamped_val = float(np.clip(fan_speed, 0.0, 100.0))
+        cmd = [
+            "nvidia-settings",
+            "--assign",
+            f"[fan:0]/GPUTargetFanSpeed={int(clamped_val)}"
+        ]
+        try:
+            subprocess.check_call(cmd, shell=False)
+        except subprocess.CalledProcessError as e:
+            print("[WARN] Setting fan speed failed?", e)
+
+    def stress_gpu(self):
+        """
+        Stress test the GPU using CUDA matrix operations
+        """
+        try:
+            import torch
+            # 創建大矩陣進行運算
+            size = 8192
+            a = torch.randn(size, size, device='cuda')
+            b = torch.randn(size, size, device='cuda')
+            
+            # 進行多次矩陣乘法運算
+            for _ in range(100):  # 執行100次運算
+                c = torch.matmul(a, b)
+                torch.cuda.synchronize()  # 確保運算完成
+        except Exception as e:
+            print("[WARN] GPU stress test failed?", e)
+
+    def get_temp(self) -> float:
+        """
+        Get current GPU temperature
+        Returns:
+            float: Current GPU temperature in Celsius
+        """
+        self.monitor.update_info()
+        obs_dict = self.monitor.get_observation()
+        self.current_temp = obs_dict["temp"]
+        return self.current_temp
+
     def step(self, action: np.ndarray):
         delta = float(action[0])
         pl_new = self.pl_old + delta

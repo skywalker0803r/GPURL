@@ -17,12 +17,10 @@ def compute_reward(
          - 否則 (pl_new >= pl_old) => 負分
       3) 若 temp<75°C => 與原先類似: reward = norm_pl × temp_factor
     """
-    """
     # (A) 大動作檢查
     delta_pl = abs(pl_new - pl_old)
     if delta_pl >= 30.0:
         return 0.0
-    """
     
     # (B) 溫度 >=75°C
     if temp >= 75.0:
