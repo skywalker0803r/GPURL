@@ -31,7 +31,7 @@ def main():
     env.set_fan_speed(fan_speed_setting)
     print(f'已設置fan_speed:{fan_speed_setting}') 
     # 燒到65度
-    target_temp = 55
+    target_temp = 65
     while env.get_temp() <= target_temp:
         env.stress_gpu()
         print(f'正在進行升溫目標:{target_temp},目前:{env.current_temp}')
